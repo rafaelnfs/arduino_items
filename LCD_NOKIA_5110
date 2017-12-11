@@ -1,0 +1,28 @@
+#include <PCD8544.h>
+
+
+// creamos una instancia de la pantalla
+static PCD8544 lcd;
+
+// puede mostrar 14 letras por linea
+
+void setup() {
+  // inicializamos la pantalla
+  lcd.begin(84,48);
+  
+}
+
+void loop() {
+  lcd.setCursor(0,0);
+  lcd.print("Rafael");
+  lcd.setCursor(0,1);
+  lcd.println("Osorio");
+  lcd.setCursor(0,2);
+  lcd.print("abcdefghijklmn");
+  lcd.setCursor(0,3);
+  lcd.print("abcdefghijklmn");
+  lcd.setCursor(0,4);
+  lcd.print("abcdefghijklmn");
+  lcd.setCursor(0,5);
+  lcd.print("abcdefghijklmn");
+}
