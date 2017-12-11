@@ -1,0 +1,59 @@
+// incluimos la libreria
+#include "SevenSegmentTM1637.h"
+
+// mas funcionalidades
+#include "SevenSegmentExtended.h"
+
+
+
+
+// definimos los pines a usar.
+#define CLK 2
+#define DIO 3
+
+// creamos una instancia del objeto tipo TM1637
+SevenSegmentExtended lcd(CLK,DIO);
+// en este caso le llamaremos lcd
+
+uint8_t val = 0;
+
+
+void setup() {
+// inicializamos el Modulo de 4 digitos
+lcd.begin();
+
+// le ponemos el brillo 100 es maximo %
+lcd.setBacklight(100);
+for(int i=0; i<99; i++){
+  lcd.printDualCounter((10+i),(20+i));
+  delay(1000);
+} 
+
+//borramos la pantalla
+lcd.clear();
+  delay(4000);
+    lcd.blink();
+      delay(1000);
+
+
+}
+
+void loop() {
+
+  lcd.print("Rafael Osorio");
+    delay(1000);
+      lcd.clear();
+      lcd.print(val);
+        val += 1;
+           delay(1000);
+              lcd.clear();
+                delay(1000);
+                  //lcd.setColonOn(true);
+                  delay(3000);
+                    lcd.clear();
+
+
+
+
+  
+}
