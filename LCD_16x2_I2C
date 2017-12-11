@@ -1,0 +1,43 @@
+/*
+ * Libreria de 
+ * https://github.com/marcoschwartz/LiquidCrystal_I2C
+ */
+
+
+
+// necesarias para iniciar la pantalla
+
+#include<Wire.h>
+#include<LiquidCrystal_I2C.h>
+
+
+// creamos una instancia de la pantalla
+LiquidCrystal_I2C lcd(0x27,16,2);
+// ponemos la direccion,filas,columnas
+
+uint8_t num =0;
+
+
+void setup() {
+lcd.init();// la iniciamos
+// viene por default sin luz (retroalimentacion)
+lcd.backlight(); // la iniciamos con la luz
+  lcd.setCursor(0,0); // le damos la posicion de lo que imprimiremos
+  lcd.print("Mensaje de prueba");
+  delay(4000);
+  lcd.clear();// borramos la pantalla para escribir otra cosa
+  
+
+}
+
+void loop() {
+lcd.setCursor(0,0);
+lcd.print("Numero: ");
+lcd.print(num);
+delay(1000);
+lcd.clear();
+num +=1;
+if(num >99){
+  num =0;
+}
+}
