@@ -1,0 +1,23 @@
+uint8_t  boton =4;
+bool estado = false;
+uint8_t cuenta = 0;
+void setup() {
+  Serial.begin(9600);
+  pinMode(boton,INPUT);
+
+}
+
+void loop() {
+ 
+ estado = digitalRead(boton);
+ if(estado){
+  Serial.print("Boton Touch Presionado: ");
+  Serial.print(cuenta);
+  Serial.println(" veces");
+  delay(300);
+  cuenta +=1;
+ }
+ if(cuenta>10){
+  cuenta = 0;
+ }
+}
