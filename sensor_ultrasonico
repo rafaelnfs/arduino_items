@@ -1,0 +1,54 @@
+
+
+// define los pines a usar
+const int trigPin = 9;
+const int echoPin = 10;
+
+// para alimentar el modulo
+const int vcc = 8;
+const int gnd = 11;
+
+// defines variables
+long duracion;
+int distancia;
+
+void setup() {
+pinMode(trigPin, OUTPUT); // trigger como salida
+pinMode(echoPin, INPUT); // echo como entrada
+
+// pines de alimentacion como salida
+pinMode(vcc,OUTPUT);
+pinMode(vcc,OUTPUT);
+
+//pines de alimentacion en el estado que van a tener
+// para alimentar el modulo
+digitalWrite(vcc,HIGH);
+digitalWrite(gnd,LOW);
+
+Serial.begin(9600); // esto es solo para debug(testear el codigo)
+}
+
+void loop() {
+// pones Trig a Cero para limpiarla de algun ruido
+digitalWrite(trigPin, LOW);
+delayMicroseconds(2); // por dos microsegundos
+
+// la pones en Estado alto para enviar el sonido por 10 microsegundos.
+digitalWrite(trigPin, HIGH);
+delayMicroseconds(10);
+digitalWrite(trigPin, LOW);
+
+// Lees cuando le tomo al pin echo para leer el sonido enviado
+duracion = pulseIn(echoPin, HIGH);
+
+// calculas la distancia
+// velocidad del sonido 340m/s
+// lo dividimos entre dos porque lo enviamos y despues tenemos
+// que recivir el sonido de regreso.
+distancia= duracion*0.034/2;
+
+// Imprimimos por el puerto serial para testear los resultados
+Serial.print("distancia Aproximada :");
+Serial.print(distancia);
+Serial.println(" cm");
+}
