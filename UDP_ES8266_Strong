@@ -1,0 +1,81 @@
+#include<ESP8266WiFi.h> // para conectarnos a WiFi
+#include<WiFiUdp.h> //Libraria para UDP
+
+const char* ssid = "CEDECEL";
+const char* password = "Eicb2018";
+
+WiFiUDP udp; // creamos un objeto de la clase UDP
+
+/*Puerto - Buffer - Respuesta*/
+unsigned int puerto = 4210; // puerto UDP
+  char recivido[255]; // buffer para lo que reciviremos
+    char respuesta[] = "Recivido Ok";
+
+
+
+void setup() {
+
+pinMode(LED_BUILTIN,OUTPUT);
+
+ Serial.begin(115200); // para debug
+  Serial.println();
+
+Serial.printf("Conectando a : %s ",ssid); 
+ int wifi =  WiFi.begin(ssid,password); // conectarnos al WiFi
+
+while(WiFi.status() != WL_CONNECTED)
+{
+delay(500); 
+  Serial.print(".");  
+}
+
+(wifi)?digitalWrite(LED_BUILTIN,HIGH):digitalWrite(LED_BUILTIN,LOW);
+
+Serial.println(" Conectado");
+  udp.begin(puerto); //iniciamos comunicacion
+    Serial.printf("Conectado a IP %s, UDP port %d\n",
+      WiFi.localIP().toString().c_str(),puerto);
+
+
+}
+
+void loop() {
+
+//tamano del paquete
+int tamPaquete = udp.parsePacket();
+
+
+// si el paquete es diferente de 0
+if(tamPaquete)
+{
+  Serial.printf("Recivido %d bytes de %s, puerto %d\n",
+    tamPaquete,udp.remoteIP().toString().c_str(),udp.remotePort());
+
+
+// lo que recivimos
+int len = udp.read(recivido,255);
+
+if(len>0)
+{
+  // reseteamos la variable para dejarla limpia
+  recivido[len] = 0;
+}
+
+
+// imprimimos lo recivido
+Serial.printf("UDP contenido %s\n",recivido);
+
+
+// enviamos respuesta y puerto de lo recivido
+udp.beginPacket( udp.remoteIP(),udp.remotePort() );
+
+// mandamos la respuesta
+udp.write(respuesta);
+
+// cerramos la conexion
+udp.endPacket();
+
+
+
+  }  
+}// FIN
