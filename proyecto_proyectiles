@@ -1,0 +1,113 @@
+/*
+Creado por Rafael Osorio, para proyecto de fisica de tiro parabolico
+Mediremos los tiempos en que son activados los sensores para que 
+con dicho dato podamos calcular velocidad ( distancia / tiempo) 
+para poder determinar alcanze del proyectil. 
+
+
+*/
+
+
+
+
+// librerias necesarias para la utilizacion de pantalla
+
+#include<Wire.h>
+#include<LiquidCrystal_I2C.h>
+
+// creamos una instancia de la libreria
+// para poder ver datos en pantalla
+LiquidCrystal_I2C lcd(0x27,16,2);
+
+byte pinR = 4; 
+
+// variables para almacenar los tiempos en cuanto se dispara
+// la interrupcions
+volatile unsigned long t1 = 0; 
+volatile unsigned long t2 = 0;
+
+// variable para resultado final
+volatile float t3 = 0;
+
+int sensor1 = 2; // pines a sensores
+int sensor2 = 3;
+
+void setup() {
+
+// habilitados la salida serial para depurar algo
+  Serial.begin(115200);
+  
+  // configuracion de entradas y salidas
+    pinMode(sensor1,INPUT);
+      pinMode(sensor2,INPUT);
+        pinMode(pinR,INPUT);
+        
+        //  interrupciones del arduino para los sensores
+      attachInterrupt(digitalPinToInterrupt(sensor1), s1, HIGH); //interruptor FIN tubo Pin(2)
+        attachInterrupt(digitalPinToInterrupt(sensor2), s2, HIGH); // interruptor INICIO tubo Pin(3)
+    
+lcd.init();
+  lcd.backlight();
+    lcd.setCursor(3,0);
+      lcd.print("Bienvenido");
+        lcd.setCursor(0,1);
+          lcd.print("Tiro Parabolico");
+          
+        
+      
+  
+}
+
+void loop(){
+
+// solo para resetear el dato interno (sin borrado de pantalla)
+ bool estado = digitalRead(pinR);
+ if(estado){
+  resetear();
+ }
+
+// si la variable a cambiado llamamos a la funcion 
+//para que modifique el dato en pantalla
+    if(t3!=0){
+       msj();
+    }
+    
+   // calculo del tiempo final
+t3 = (t2-t1);
+ t3 /=1000;
+  
+}
+
+//funcion para visualizar en pantalla el dato.
+void msj(){
+  lcd.clear();   
+    lcd.setCursor(0,0);
+      lcd.print("Tiempo Sensado: ");
+        lcd.setCursor(0,1);
+          lcd.print(t3);
+          delay(1000);
+  
+}
+
+
+//funciones a llamar cuando se activo un sensor
+void s2(){
+  // primer interruptor
+  t2 = millis();
+  
+
+//funciones a llamar cuando se activo un sensor
+void s1(){ 
+  //segundo interruptor
+  t1  = millis();
+  
+      
+    
+}
+
+
+}
+//para borrar dato interno de la variable y no resetear el arduino
+float resetear(){
+  t3 = 0;
+}
