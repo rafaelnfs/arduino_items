@@ -1,0 +1,127 @@
+
+
+#define MAX 10
+#include <ESP8266WiFi.h>
+#include <PubSubClient.h>
+
+const char* ssid = "TURBONETT_1";
+const char* pass = "abcd2019";
+const char* mqttServer = "192.168.1.11";
+const int port = 1883;
+
+
+// creamos una instancia de la clase 
+// wificlient para utilizarla con la libreia
+// mqtt Node ya que es una NodeMCU
+WiFiClient node;
+PubSubClient client(node);
+
+void setup(){
+
+  pinMode(D6,OUTPUT);
+  digitalWrite(D6,LOW);
+
+    // activamos solo para depurar
+    Serial.begin(115200);
+
+    // conectamos la Node A internet
+    WiFi.begin(ssid,pass);
+
+
+while (WiFi.status()!= WL_CONNECTED)
+    {
+     delay(500);
+      Serial.println("Conectando al WiFi.");
+    }
+
+    
+    Serial.println("Conectado a Wifi");
+
+    // creamos la conexion con el servidor
+    client.setServer(mqttServer,port);
+
+      // funcion que llamara al recivir mensaje
+      client.setCallback(callback);
+
+while( !client.connected() ){
+
+    Serial.println("Conectando a Servidor MQTTT");
+      if(client.connect("NodeMCU")){
+        
+          Serial.println("conectado.");
+      }else{
+          Serial.print("Fallo al conectar");
+            Serial.print(client.state());
+                delay(200);
+     }
+}
+     
+client.subscribe("casa");
+
+}
+
+
+void callback(char* topic,byte* payload,unsigned int length){
+    //Serial.print("Recivido Topic:");
+      //Serial.println(topic);
+        //Serial.print("mensaje: ");
+        
+char msg[MAX]={}; 
+
+    for(int i=0; i<length; i++){
+     //Serial.print((char)payload[i]);
+        msg[i] +=(char)payload[i];
+  }   
+     
+     Serial.print("Salida_Fomal:");
+        Serial.println(msg);
+
+        if(strcmp(msg,"1")== 0){
+
+          digitalWrite(D6,HIGH);
+          
+        }else{
+          digitalWrite(D6,LOW);
+        }
+        
+}
+
+// para evitar que al desconectar 
+// no se vuelva a conectar
+void reconnect(){
+while(!client.connected()){
+
+  Serial.print("conectando a MQTT");
+    if( client.connect("NodeMCU")){
+        Serial.println("conectado");
+          client.subscribe("casa");
+     }else{
+      Serial.print("fallo conexion");
+        Serial.println(client.state());
+          Serial.println("intentando en 5 segundos");
+            delay(5000);
+     }
+  
+}
+
+  
+}
+
+
+
+
+
+void loop(){
+
+  if(!client.connected()){
+
+// si se desconecta se vuelve a conectar
+    reconnect();
+    
+  }
+
+
+  // funcion que verifica si hay mensajes
+     client.loop();
+     
+}
