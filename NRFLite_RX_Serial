@@ -1,0 +1,57 @@
+#include <SPI.h>
+#include <NRFLite.h>
+
+// tu numero de radio
+const static uint8_t RADIO_ID = 0;
+
+
+// parametros de conexion
+const static uint8_t PIN_RADIO_CE = 9;
+const static uint8_t PIN_RADIO_CSN  = 10;
+
+
+
+
+
+struct RadioPacket{
+  //uint8_t FromRadioId; //guardar radio
+  //uint32_t FailedTXCount; // cuenta fallidos
+  char txt[10]; //
+
+
+};
+
+NRFLite _radio;
+
+RadioPacket _radioData;
+
+void setup()
+{
+  Serial.begin(9600);
+    if(!_radio.init(RADIO_ID,PIN_RADIO_CE,PIN_RADIO_CSN)){
+      Serial.println("NO CONECTADO");
+        while(1);
+    }
+
+  Serial.println("Iniciando Arduino");
+    
+
+}
+
+void loop()
+{
+  
+
+while(_radio.hasData()){
+
+
+  _radio.readData(&_radioData);
+
+      String msg ="Radio: ";
+      msg += String((char*)_radioData.txt);
+
+    Serial.println(msg);
+
+  }
+
+}
