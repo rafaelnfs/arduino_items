@@ -1,0 +1,67 @@
+#include <SPI.h>
+#include <NRFLite.h>
+
+// tu numero de radio
+const static uint8_t RADIO_ID = 1;
+
+// a quien le envias
+const static uint8_t DESTINATION_RADIO_ID = 0;
+
+// parametros de conexion
+const static uint8_t PIN_RADIO_CE = 9;
+const static uint8_t PIN_RADIO_CSN  = 10;
+
+
+struct RadioPacket{
+  
+
+  uint8_t FromRadioId; //guardar radio
+  uint32_t FailedTXCount; // cuenta fallidos
+  char txt[10]; //
+
+
+};
+
+// RFLite 
+NRFLite _radio;
+
+// creamos un struc
+RadioPacket _radioData;
+
+
+
+void setup()
+{
+  
+
+Serial.begin(9600);
+  if(!_radio.init(RADIO_ID,PIN_RADIO_CE,PIN_RADIO_CSN)){
+
+    Serial.println("No se puede conectar a Radio");
+      while(1); // espera a que lo haga
+}
+
+
+
+}
+
+
+void loop()
+{
+ 
+if(Serial.available()>0){
+   String numero = Serial.readStringUntil("\r");
+      numero.toCharArray(_radioData.txt,sizeof(numero)); 
+       
+  bool exito = _radio.send(DESTINATION_RADIO_ID,&_radioData.txt,sizeof(_radioData.txt));
+
+    
+if(exito){
+  Serial.print("enviado: ");
+      Serial.println(_radioData.txt);
+
+}
+
+  }
+
+}
