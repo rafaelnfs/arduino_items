@@ -1,32 +1,60 @@
+/*
+$1 - ----1 pulso
+$0.25 -- 2 pulsos
+$0.05 -- 3 pulsos
+
+Eso lo configuramos en la coinSelector
+cuantos pulsos deceamos que nos mande para cada moneda
+*/
 
 
+// entrada de pulsos
  const int dataPin = 7;
+ 
+ // variable para almacenar la duracion pulso
  volatile unsigned long duracion = 0;
+ 
+ // variable que se aumentara cada vez que 
+ // haya un pulso en la maquina
  volatile unsigned long times = 0;
  
  
 void setup() {
+// para Depurar nada mas
  Serial.begin(9600);
   Serial.println("Iniciando Arduino");
+  
+  // declaramos el pin 7 como entrada de datos para pulseIn()
   pinMode(dataPin,INPUT);
 }
 
 void loop() {
+
+// utilizamos pulseIn para reconocer los pulsos
+// provenientes de la coinSelector
+
 duracion= pulseIn(dataPin,HIGH);
 
+
+// cada vez que duracion sea mayor a 0 lo que haremos es sumar
+// cada pulso 
 if(duracion){
   times +=1;
-  
+    
+ 
 
 }
+// cuando no haya pulsos en el pin 7 analizamos los pulses
+// que mando la coinSelector
+
 if(duracion == 0){
 
   switch(times){
-    case 3: Serial.println("cora");
+    case 1: Serial.println("Dolar");
       break;
-    case 5: Serial.println("cinco");
+    case 2: Serial.println("Cora");
       break;
-    case 10: Serial.println("Dolar");
+    case 3: Serial.println("Cinco");
       break;
   }
   times = 0;
