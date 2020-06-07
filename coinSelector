@@ -1,0 +1,36 @@
+
+
+ const int dataPin = 7;
+ volatile unsigned long duracion = 0;
+ volatile unsigned long times = 0;
+ 
+ 
+void setup() {
+ Serial.begin(9600);
+  Serial.println("Iniciando Arduino");
+  pinMode(dataPin,INPUT);
+}
+
+void loop() {
+duracion= pulseIn(dataPin,HIGH);
+
+if(duracion){
+  times +=1;
+  
+
+}
+if(duracion == 0){
+
+  switch(times){
+    case 3: Serial.println("cora");
+      break;
+    case 5: Serial.println("cinco");
+      break;
+    case 10: Serial.println("Dolar");
+      break;
+  }
+  times = 0;
+  
+}
+  
+}
