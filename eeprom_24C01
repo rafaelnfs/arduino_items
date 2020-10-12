@@ -1,0 +1,57 @@
+#include <Wire.h>
+#define BAUD 9600
+// direccion de la eeprom
+#define ADDRESS 0x50
+
+//Escritura
+void eeprom_write(byte address, byte pos, byte data) {
+  
+  Wire.beginTransmission(address);
+  Wire.write(pos);
+  Wire.write(data);
+  Wire.endTransmission();
+}
+
+// La lectura
+byte eeprom_read(byte device, int pos) {
+  byte info = 0;
+  Wire.beginTransmission(device);
+  Wire.write(pos);
+  Wire.endTransmission();
+  Wire.requestFrom(device, 1);
+  delayMicroseconds(100);
+  if (Wire.available()) {
+    info = Wire.read();
+  }
+  return info;
+  
+
+}
+
+
+void setup() {
+  Serial.begin(BAUD);
+  Wire.begin(ADDRESS);
+  Serial.println("Probando arduino");
+  
+  // Lee las celdas de la EEPROM
+  for (byte i = 0; i < 128; i++) {
+    byte info = eeprom_read(ADDRESS, i);
+    Serial.print("info:");
+    Serial.print(info);
+    Serial.print(" pos:");
+    Serial.println(i);
+    delay(100);
+  }
+// resetea todas las celdas a valor 0
+//  for (byte i = 0; i < 128; i++) {
+//    eeprom_write(ADDRESS, i, 0);
+//    delay(100);
+//  }
+  delay(500);
+  Serial.println("Datos Guardados");
+}
+
+void loop() {
+
+}
